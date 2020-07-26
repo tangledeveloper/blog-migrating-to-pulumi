@@ -1,0 +1,30 @@
+{
+  "name": "blog-migrating-to-pulumi",
+  "version": "1.0.0",
+  "description": "Migrating Serverless to Pulumi Project",
+  "main": "index.ts",
+  "scripts": {
+    "prepackage": "rm -rf build layers",
+    "build": "tsc",
+    "lint": "eslint .",
+    "package": "./package.sh",
+    "watch": "tsc -w"
+  },
+  "author": "Venky Koneru <koneru.chowdary@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@pulumi/aws": "2.13.1",
+    "@pulumi/awsx": "0.20.0",
+    "@pulumi/pulumi": "2.7.1",
+    "@types/node": "12.12.53",
+    "@types/uuid": "8.0.0",
+    "eslint": "7.5.0",
+    "eslint-config-airbnb-base": "14.2.0",
+    "eslint-plugin-import": "2.22.0",
+    "typescript": "3.9.7"
+  },
+  "dependencies": {
+    "aws-sdk": "2.720.0",
+    "uuid": "8.2.0"
+  }
+}

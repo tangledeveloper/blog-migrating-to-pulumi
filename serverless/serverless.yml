@@ -1,0 +1,78 @@
+service: todos-api
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+  region: eu-central-1
+  environment:
+    PRE_NAME: ${self:service}-${opt:stage, self:provider.stage}
+    DYNAMODB_TABLE: ${self:provider.environment.PRE_NAME}
+    ROLE_NAME: ${self:provider.environment.PRE_NAME}-executionRole
+    CREATE_TODO_FUNCTION_NAME: ${self:provider.environment.PRE_NAME}-createTodo
+  role: executionRole
+
+functions:
+  createTodo:
+    name: ${self:provider.environment.CREATE_TODO_FUNCTION_NAME}
+    handler: functions/index.create
+    memorySize: 128
+    environment:
+      DYNAMODB_TABLE: ${self:provider.environment.DYNAMODB_TABLE}
+    events:
+      - http:
+          path: new
+          method: post
+
+resources:
+  Resources:
+    executionRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: ${self:provider.environment.ROLE_NAME}
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: ${self:provider.environment.ROLE_NAME}-policy
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - logs:CreateLogGroup
+                    - logs:CreateLogStream
+                    - logs:PutLogEvents
+                  Resource: arn:aws:logs:${opt:region, self:provider.region}:#{AWS::AccountId}:log-group:/aws/lambda/${self:provider.environment.CREATE_TODO_FUNCTION_NAME}*
+                - Effect: Allow
+                  Action:
+                    - dynamodb:Query
+                    - dynamodb:Scan
+                    - dynamodb:GetItem
+                    - dynamodb:PutItem
+                    - dynamodb:UpdateItem
+                    - dynamodb:DeleteItem
+                  Resource: arn:aws:dynamodb:${opt:region, self:provider.region}:#{AWS::AccountId}:table/${self:provider.environment.DYNAMODB_TABLE}
+    TodosDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-pseudo-parameters
