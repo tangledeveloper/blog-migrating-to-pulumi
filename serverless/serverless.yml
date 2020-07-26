@@ -15,7 +15,7 @@ provider:
 functions:
   createTodo:
     name: ${self:provider.environment.CREATE_TODO_FUNCTION_NAME}
-    handler: functions/index.create
+    handler: functions/crate.handler
     memorySize: 128
     environment:
       DYNAMODB_TABLE: ${self:provider.environment.DYNAMODB_TABLE}
