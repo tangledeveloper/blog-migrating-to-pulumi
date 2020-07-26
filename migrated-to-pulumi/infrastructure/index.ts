@@ -103,7 +103,7 @@ const nodeModuleLambdaLayer = new aws.lambda.LayerVersion(nodeModuleLambdaLayerN
 const createTodoFunction = new aws.lambda.Function(createTodoFunctionName, {
   name: createTodoFunctionName,
   runtime: aws.lambda.NodeJS12dXRuntime,
-  handler: 'functions/create.create',
+  handler: 'functions/create.handler',
   role: executionRole.arn,
   code,
   layers: [nodeModuleLambdaLayer.arn],
