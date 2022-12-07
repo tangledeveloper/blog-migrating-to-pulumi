@@ -16,7 +16,7 @@
     "eslint": "7.5.0",
     "eslint-config-airbnb-base": "14.2.0",
     "eslint-plugin-import": "2.22.0",
-    "serverless": "1.76.1",
+    "serverless": "3.25.1",
     "serverless-plugin-typescript": "1.1.9",
     "serverless-pseudo-parameters": "2.5.0",
     "typescript": "3.9.7"
